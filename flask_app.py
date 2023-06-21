@@ -8,9 +8,10 @@ from database import Database
 from chat_connector import ChatConnector
 import threading
 import re
+import logger
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading', async_handlers=True,allow_unsafe_requests=True, debug=True)
 
 class InvalidParametersError(Exception):
     """
@@ -61,14 +62,16 @@ def sentiment_meter():
     meter = request.args.get('meter')
 
     if meter == None or channel == None or stream == None:
-        return render_template('index.html')
+        try:
+            url = "jfKfPfyJRdk"
+            chat_connector = ChatConnector("youtube",url)
+            sentiment_analyzer = SentimentAnalyzer("none")
+            threading.Thread(target=start_stream, args=(chat_connector, sentiment_analyzer)).start()
+        except Exception as e:
+            raise ChatConnectionError from e
 
-    # Validate the parameters
-    if (stream not in ['youtube', 'twitch'] or not channel or meter not in ['analogue', 'digital']):
-        raise InvalidParametersError
+    return render_template('index.html')
 
-    # Render the meter page
-    return render_template('meter.html', stream=stream, channel=channel, meter=meter)
 class ChatConnectionError(Exception):
     """
     Custom exception class for chat connection errors.
@@ -110,19 +113,50 @@ def start_stream(chat_connector, sentiment_analyzer):
     """
     Connect to the chat and analyze the sentiment of the chat messages.
     """
+    while True:
+        try:
+            # Get a chat message
+            for message in chat_connector.get_message():
+                timestamp = message['timestamp']
+                author = message['author']
+                text = message['message']
+                sentiment_score = sentiment_analyzer.analyze_sentiment(text, author, timestamp)
+                # Update the sentiment meter with the sentiment score
+                #sentiment_meter.update(sentiment_score) #TODO: Update the sentiment meter on the javascript page using the SentimentMeter class. 
+                # SentimentMeter Class that will display a javascript driven meter that still needs to be written in the Flask application code.
+                socketio.emit('sentiment_score', {'score': sentiment_score})
+  
+        except Exception as e:
+            logger.log_message(f"An error occurred: {e}")
+            continue
+        except KeyboardInterrupt:
+            logger.log_message("Stopping application...")
+            break
+
     try:
         # Connect to the chat
-        chat_connector.connect()
-
-        # Continuously analyze the chat sentiment
+        chat_connector.connect_to_chat(self)
         while True:
-            message = chat_connector.get_message()
-            sentiment_score = sentiment_analyzer.analyze_sentiment(message)
-            socketio.emit('sentiment_score', {'score': sentiment_score})
+            try:
+                # Get a chat message
+                for message in chat_connector.get_message():
+                    timestamp = message['timestamp']
+                    author = message['author']
+                    text = message['message']
+                    sentiment_score = sentiment_analyzer.analyze_sentiment(text, author, timestamp)
+                    socketio.emit('sentiment_score', {'score': sentiment_score})
+            except Exception as e:
+                # Log the error and disconnect the socket
+                app.logger.error(f"An error occurred: {e}")
+                disconnect()
+                break
     except Exception as e:
         # Log the error and disconnect the socket
-        app.logger.error(f"An error occurred: {e}")
+        app.logger.log_message(f"An error occurred: {e}")
         disconnect()
+        app.logger.log_message("Stopping application...")
+    
+
 
 def send_random_sentiment():
     while True:
@@ -136,5 +170,5 @@ if __name__ == '__main__':
         socketio.run(app)
     except Exception as e:
         # Log the error and exit the application
-        app.logger.error(f"An error occurred: {e}")
+        app.logger.log_message(f"An error occurred: {e}")
         exit(1)
