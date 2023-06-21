@@ -133,28 +133,6 @@ def start_stream(chat_connector, sentiment_analyzer):
             logger.log_message("Stopping application...")
             break
 
-    try:
-        # Connect to the chat
-        chat_connector.connect_to_chat(self)
-        while True:
-            try:
-                # Get a chat message
-                for message in chat_connector.get_message():
-                    timestamp = message['timestamp']
-                    author = message['author']
-                    text = message['message']
-                    sentiment_score = sentiment_analyzer.analyze_sentiment(text, author, timestamp)
-                    socketio.emit('sentiment_score', {'score': sentiment_score})
-            except Exception as e:
-                # Log the error and disconnect the socket
-                app.logger.error(f"An error occurred: {e}")
-                disconnect()
-                break
-    except Exception as e:
-        # Log the error and disconnect the socket
-        app.logger.log_message(f"An error occurred: {e}")
-        disconnect()
-        app.logger.log_message("Stopping application...")
     
 
 
