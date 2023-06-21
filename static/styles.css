@@ -1,0 +1,36 @@
+.analog-meter {
+    position: relative;
+    width: 200px;
+    height: 100px;
+    background: url('meter.png') no-repeat;
+}
+
+.needle {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    height: 100px;
+    background: red;
+    transform-origin: bottom;
+    transform: rotate(0deg);
+}
+
+.light-bar-meter {
+    display: flex;
+}
+
+.light {
+    width: 20px;
+    height: 20px;
+    margin: 2px;
+    background: gray;
+}
+
+.light.red {
+    order: 1;
+}
+
+.light.green {
+    order: 2;
+}

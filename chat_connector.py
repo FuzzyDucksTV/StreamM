@@ -44,7 +44,13 @@ class ChatConnector:
         Returns:
             str: The URL of the streaming channel.
         """
-        return f"https://www.youtube.com/watch?v=jfKfPfyJRdk"
+        #default url is 'https://www.youtube.com/watch?v=jfKfPfyJRdk'
+        #TODO add support for other streaming services
+        #TODO add code to give the default url if url 
+        #is not specified
+        if self.streaming_service.lower() == 'youtube' or self.streaming_service.lower() == 'twitch' and self.streaming_channel == 'jfKfPfyJRdk':
+            return 'https://www.youtube.com/watch?v=jfKfPfyJRdk'
+
         if self.streaming_service.lower() == 'twitch':
             return f"https://www.twitch.tv/{self.streaming_channel}"
         elif self.streaming_service.lower() == 'youtube':
