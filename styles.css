@@ -2,7 +2,7 @@
     position: relative;
     width: 600px;
     height: 600px;
-    background: url('meter.png') no-repeat;
+    background: url('/static/meter.png') no-repeat;
 }
 
 .needle {
