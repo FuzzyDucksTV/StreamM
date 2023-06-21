@@ -1,3 +1,4 @@
+import random
 from flask import Flask, request, render_template, jsonify
 from flask_socketio import SocketIO, disconnect
 import sqlite3
@@ -9,7 +10,7 @@ import threading
 import re
 
 app = Flask(__name__)
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 class InvalidParametersError(Exception):
     """
