@@ -1,18 +1,17 @@
 .analog-meter {
     position: relative;
-    width: 600px;
-    height: 600px;
+    width: 800px;
+    height: 800px;
     background: url('meter.png') no-repeat;
 }
 
 .needle {
     position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 2px;
-    height: 500px;
-    background: red;
-    transform-origin: bottom;
+    bottom: 30%;
+    left: 376px;
+    width: 54px;
+    height: 320px;
+    transform-origin: 27px 221px;  /* Adjust as needed */
     transform: rotate(0deg);
 }
 
@@ -29,6 +28,44 @@
 
 .light.red {
     order: 1;
+}
+@keyframes gradient-background {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient-background 15s ease infinite;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    color: #333;
+}
+#url-input {
+    width: 80%;
+    padding: 10px;
+    font-size: 1em;
+    margin: 20px 0;
+}
+#create-url-button {
+    padding: 10px 20px;
+    font-size: 1em;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+#created-url {
+    margin-top: 20px;
+}
+.tutorial {
+    margin-top: 20px;
 }
 
 .light.green {

@@ -35,23 +35,6 @@ def home():
     """
     return render_template('index.html')
 
-@app.route('/index.html', methods=['POST'])
-def generate():
-    """
-    Generate the URL for the sentiment meter based on the user's input.
-    """
-    url = request.form.get('url')
-
-    # Validate the URL
-    if not re.match(r'https?://(www\.)?(youtube\.com/watch\?v=|twitch\.tv/)[^\s]+', url):
-        raise InvalidParametersError
-
-    # Start the chat connector and sentiment analyzer using the classes in the chat_connector.py and sentiment_analyzer.py.
-    # Note we will have to change the existing code in sentiment_analyzer.py to make writing to the database optional (especially in development as we have finite resources).
-
-    # Return the generated URL for the meter
-    return jsonify({'meter_url': f'{request.base_url}?stream=youtube&channel={url.split("=")[-1]}&meter=analogue'})
-
 @app.route('/index.html', methods=['GET'])
 def sentiment_meter():
     """
@@ -67,10 +50,18 @@ def sentiment_meter():
             chat_connector = ChatConnector("youtube",url)
             sentiment_analyzer = SentimentAnalyzer("none")
             threading.Thread(target=start_stream, args=(chat_connector, sentiment_analyzer)).start()
+            return render_template('index.html')
         except Exception as e:
             raise ChatConnectionError from e
-
-    return render_template('index.html')
+    else:
+        try:
+            chat_connector = ChatConnector(stream, channel)
+            sentiment_analyzer = SentimentAnalyzer(meter)
+            threading.Thread(target=start_stream, args=(chat_connector, sentiment_analyzer)).start()
+            return render_template('meter.html')
+        except Exception as e:
+            raise ChatConnectionError from e
+            
 
 class ChatConnectionError(Exception):
     """
@@ -124,7 +115,7 @@ def start_stream(chat_connector, sentiment_analyzer):
                 # Update the sentiment meter with the sentiment score
                 #sentiment_meter.update(sentiment_score) #TODO: Update the sentiment meter on the javascript page using the SentimentMeter class. 
                 # SentimentMeter Class that will display a javascript driven meter that still needs to be written in the Flask application code.
-                socketio.emit('sentiment_score', {'score': sentiment_score})
+                socketio.emit('sentiment', {'sentiment': sentiment_score})
   
         except Exception as e:
             logger.log_message(f"An error occurred: {e}")
@@ -132,15 +123,6 @@ def start_stream(chat_connector, sentiment_analyzer):
         except KeyboardInterrupt:
             logger.log_message("Stopping application...")
             break
-
-    
-
-
-def send_random_sentiment():
-    while True:
-        socketio.sleep(1)
-        sentiment = random.uniform(-1, 1)  # Generate a random sentiment score between -1 and 1
-        socketio.emit('sentiment', {'sentiment': sentiment})
 
 
 if __name__ == '__main__':

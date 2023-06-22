@@ -5,21 +5,24 @@
     <link rel="stylesheet" type="text/css" href="/static/styles.css">
 </head>
 <body>
+    <h1>StreamMatey</h1>
+    <input type='text' id='url-input' placeholder='Enter a YouTube or Twitch URL here...'>
+    <button id='create-url-button'>Create URL</button>
+    <p id='created-url'></p>
+    <button id='copy-url-button' style='display: none;'>Copy URL</button>
+    <div class='tutorial'>
+        <h2>How to add StreamMatey to your streaming software:</h2>
+        <h3>OBS:</h3>
+        <a href='https://support.streamelements.com/en/articles/25-adding-an-overlay-to-obs-studio' target='_blank'>Tutorial for OBS</a>
+        <h3>StreamElements:</h3>
+        <a href='https://blog.streamelements.com/1-minute-twitch-stream-setup-89a6c73c85b9' target='_blank'>Tutorial for StreamElements</a>
+        <h3>StreamLabs:</h3>
+        <a href='https://www.youtube.com/watch?v=X3zZgxSLbn4' target='_blank'>Tutorial for StreamLabs</a>
+    </div>
     <div class="analog-meter">
-        <div class="needle"></div>
+        <img src="/static/needle.png" class="needle" alt="needle" />
     </div>
-    WebSocket connection to 'ws://localhost:5000/socket.io/?EIO=4&transport=websocket&sid=ORxEHwdrzbXfhOC0AAAC' failed: Invalid frame header    <div class="light-bar-meter">
-        <div class="light red"></div>
-        <div class="light red"></div>
-        <div class="light red"></div>
-        <div class="light red"></div>
-        <div class="light red"></div>
-        <div class="light green"></div>
-        <div class="light green"></div>
-        <div class="light green"></div>
-        <div class="light green"></div>
-        <div class="light green"></div>
-    </div>
+    <p id="sentiment-score">Sentiment Score: </p>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.0/socket.io.min.js"></script>
     <script src="/static/meter.js"></script>
 </body>

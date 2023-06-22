@@ -1,26 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <title>StreamMatey AI Sentiment Meter</title>
+    <title>StreamMatey</title>
     <link rel="stylesheet" type="text/css" href="/static/styles.css">
 </head>
 <body>
     <div class="analog-meter">
-        <div class="needle"></div>
+        <img src="/static/needle.png" class="needle" alt="needle" />
     </div>
-    <p></p>
-    <div class="light-bar-meter">
-        <div class="light red"></div>
-        <div class="light red"></div>
-        <div class="light red"></div>
-        <div class="light red"></div>
-        <div class="light red"></div>
-        <div class="light green"></div>
-        <div class="light green"></div>
-        <div class="light green"></div>
-        <div class="light green"></div>
-        <div class="light green"></div>
-    </div>
+    <p id="sentiment-score">Sentiment Score: </p>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.0/socket.io.min.js"></script>
     <script src="/static/meter.js"></script>
 </body>
